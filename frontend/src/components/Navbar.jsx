@@ -1,57 +1,119 @@
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { logoutUser } from "../services/authService";
+import { useNavigate } from "react-router-dom";
 
-function Navbar(){
+function Navbar() {
 
-return(
+    const { user } = useContext(AuthContext);
 
-<nav
-style={{
-background:"#1f2937",
-padding:"15px",
-display:"flex",
-justifyContent:"space-between",
-alignItems:"center"
-}}
->
+    const navigate = useNavigate();
 
-<h2 style={{color:"white"}}>
+    const handleLogout = async () => {
+        await logoutUser();
+        navigate("/login");
+    };
 
-AI Learning Platform
+    return (
 
-</h2>
+        <nav
+            style={{
+                background: "#1f2937",
+                color: "white",
+                padding: "15px",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center"
+            }}
+        >
 
-<div>
+            <h2>AI Learning Platform</h2>
 
-<Link
-to="/dashboard"
-style={{
-color:"white",
-marginRight:"20px",
-textDecoration:"none"
-}}
->
+            <div>
 
-Dashboard
+                <Link
+                    to="/"
+                    style={{
+                        color: "white",
+                        marginRight: "20px",
+                        textDecoration: "none"
+                    }}
+                >
+                    Home
+                </Link>
 
-</Link>
+                {!user ? (
 
-<Link
-to="/upload"
-style={{
-color:"white",
-textDecoration:"none"
-}}
->
+                    <>
 
-Upload
+                        <Link
+                            to="/login"
+                            style={{
+                                color: "white",
+                                marginRight: "20px",
+                                textDecoration: "none"
+                            }}
+                        >
+                            Login
+                        </Link>
 
-</Link>
+                        <Link
+                            to="/signup"
+                            style={{
+                                color: "white",
+                                textDecoration: "none"
+                            }}
+                        >
+                            Signup
+                        </Link>
 
-</div>
+                    </>
 
-</nav>
+                ) : (
 
-);
+                    <>
+
+                        <Link
+                            to="/dashboard"
+                            style={{
+                                color: "white",
+                                marginRight: "20px",
+                                textDecoration: "none"
+                            }}
+                        >
+                            Dashboard
+                        </Link>
+
+                        <Link
+                            to="/upload"
+                            style={{
+                                color: "white",
+                                marginRight: "20px",
+                                textDecoration: "none"
+                            }}
+                        >
+                            Upload
+                        </Link>
+
+                        <button
+                            onClick={handleLogout}
+                            style={{
+                                cursor: "pointer"
+                            }}
+                        >
+                            Logout
+                        </button>
+
+                    </>
+
+                )}
+
+            </div>
+
+        </nav>
+
+    );
 
 }
 

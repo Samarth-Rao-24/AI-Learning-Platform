@@ -1,122 +1,113 @@
 import { useContext, useEffect, useState } from "react";
-
 import { AuthContext } from "../context/AuthContext";
-
 import { getUserProfile } from "../services/firestoreService";
-
 import "./../styles/dashboard.css";
 
-function Dashboard(){
+function Dashboard() {
 
-const {user}=useContext(AuthContext);
+    const { user } = useContext(AuthContext);
 
-const [profile,setProfile]=useState(null);
+    const [profile, setProfile] = useState(null);
 
-useEffect(()=>{
+    useEffect(() => {
 
-const loadProfile=async()=>{
+        const fetchProfile = async () => {
 
-if(user){
+            if (user) {
 
-const data=await getUserProfile(user.uid);
+                const data = await getUserProfile(user.uid);
 
-setProfile(data);
+                setProfile(data);
 
-}
+            }
 
-};
+        };
 
-loadProfile();
+        fetchProfile();
 
-},[user]);
+    }, [user]);
 
-return(
+    return (
 
-<div className="dashboard-container">
+        <div className="dashboard-container">
 
-<h1>
+            <div className="profile-card">
 
-Welcome
+                <h2>Student Profile</h2>
 
-</h1>
+                <p><strong>Email:</strong> {profile?.email}</p>
 
-<p>
+                <p><strong>User ID:</strong> {profile?.uid}</p>
 
-{profile?.email}
+            </div>
 
-</p>
+            <div className="dashboard-cards">
 
-<div className="dashboard-cards">
+                <div className="card">
 
-<div className="card">
+                    <h3>Subjects</h3>
 
-<h3>
+                    <h2>5</h2>
 
-Subjects
+                </div>
 
-</h3>
+                <div className="card">
 
-<h2>
+                    <h3>Study Hours</h3>
 
-5
+                    <h2>24</h2>
 
-</h2>
+                </div>
 
-</div>
+                <div className="card">
 
-<div className="card">
+                    <h3>Completed Topics</h3>
 
-<h3>
+                    <h2>18</h2>
 
-Study Hours
+                </div>
 
-</h3>
+                <div className="card">
 
-<h2>
+                    <h3>Quiz Accuracy</h3>
 
-24
+                    <h2>89%</h2>
 
-</h2>
+                </div>
 
-</div>
+            </div>
 
-<div className="card">
+            <div className="quick-actions">
 
-<h3>
+                <h2>Quick Actions</h2>
 
-Completed Topics
+                <button>Upload Material</button>
 
-</h3>
+                <button>Start Quiz</button>
 
-<h2>
+                <button>Generate Notes</button>
 
-18
+            </div>
 
-</h2>
+            <div className="recent-activity">
 
-</div>
+                <h2>Recent Activity</h2>
 
-<div className="card">
+                <ul>
 
-<h3>
+                    <li>Uploaded Operating Systems Notes</li>
 
-Quiz Accuracy
+                    <li>Completed Java Quiz</li>
 
-</h3>
+                    <li>Generated AI Flashcards</li>
 
-<h2>
+                </ul>
 
-89%
+            </div>
 
-</h2>
+        </div>
 
-</div>
-
-</div>
-
-</div>
-
-);
+    );
 
 }
 

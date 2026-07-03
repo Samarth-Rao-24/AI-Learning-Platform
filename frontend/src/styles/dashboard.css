@@ -53,3 +53,35 @@
     margin-top:10px;
     border-radius:8px;
 }
+
+.profile-card{
+
+    background:white;
+
+    padding:20px;
+
+    border-radius:10px;
+
+    margin-bottom:30px;
+
+    box-shadow:0px 2px 8px rgba(0,0,0,0.1);
+
+}
+
+.profile-card p{
+
+    margin-top:10px;
+
+}
+
+.recent-activity{
+
+    margin-top:40px;
+
+}
+
+.quick-actions{
+
+    margin-top:40px;
+
+}
