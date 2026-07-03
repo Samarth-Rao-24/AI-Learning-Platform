@@ -1,38 +1,50 @@
-import "./../styles/dashboard.css";
-
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { AuthContext } from "../context/AuthContext";
+
+import { getUserProfile } from "../services/firestoreService";
+
+import "./../styles/dashboard.css";
 
 function Dashboard(){
 
 const {user}=useContext(AuthContext);
 
+const [profile,setProfile]=useState(null);
+
+useEffect(()=>{
+
+const loadProfile=async()=>{
+
+if(user){
+
+const data=await getUserProfile(user.uid);
+
+setProfile(data);
+
+}
+
+};
+
+loadProfile();
+
+},[user]);
+
 return(
 
 <div className="dashboard-container">
 
-<div className="dashboard-header">
-
-<div>
-
 <h1>
 
-Welcome,
-
-{user?.email}
+Welcome
 
 </h1>
 
 <p>
 
-Ready to continue learning?
+{profile?.email}
 
 </p>
-
-</div>
-
-</div>
 
 <div className="dashboard-cards">
 
@@ -97,72 +109,6 @@ Quiz Accuracy
 89%
 
 </h2>
-
-</div>
-
-</div>
-
-<div className="quick-actions">
-
-<h2>
-
-Quick Actions
-
-</h2>
-
-<div className="action-buttons">
-
-<button>
-
-Upload Study Material
-
-</button>
-
-<button>
-
-Start Quiz
-
-</button>
-
-<button>
-
-AI Tutor
-
-</button>
-
-<button>
-
-Study Notes
-
-</button>
-
-</div>
-
-</div>
-
-<div className="recent-section">
-
-<h2>
-
-Recent Activity
-
-</h2>
-
-<div className="activity-item">
-
-Uploaded Data Structures Notes
-
-</div>
-
-<div className="activity-item">
-
-Completed Sorting Quiz
-
-</div>
-
-<div className="activity-item">
-
-Generated AI Flashcards
 
 </div>
 
