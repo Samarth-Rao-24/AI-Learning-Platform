@@ -1,4 +1,6 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, request, current_app
+from werkzeug.utils import secure_filename
+import os
 
 api_bp = Blueprint("api", __name__)
 
@@ -16,4 +18,30 @@ def test():
         "status": "success",
         "message": "React is connected to Flask!",
         "version": "1.0"
+    })
+
+
+@api_bp.route("/api/upload", methods=["POST"])
+def upload_file():
+
+    if "file" not in request.files:
+        return jsonify({"message": "No file selected"}), 400
+
+    file = request.files["file"]
+
+    if file.filename == "":
+        return jsonify({"message": "No file selected"}), 400
+
+    filename = secure_filename(file.filename)
+
+    filepath = os.path.join(
+        current_app.config["UPLOAD_FOLDER"],
+        filename
+    )
+
+    file.save(filepath)
+
+    return jsonify({
+        "message": "File uploaded successfully",
+        "filename": filename
     })

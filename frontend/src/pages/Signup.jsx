@@ -1,9 +1,7 @@
 import { useState } from "react";
 
 import { registerUser } from "../services/authService";
-
 import { createUserProfile } from "../services/firestoreService";
-
 function Signup() {
 
 const [email, setEmail] = useState("");

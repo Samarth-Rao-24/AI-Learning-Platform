@@ -1,9 +1,92 @@
+import { useState } from "react";
+import { uploadFile } from "../services/uploadService";
+
 function Upload() {
+
+    const [file, setFile] = useState(null);
+
+    const [message, setMessage] = useState("");
+
+    const allowedTypes = [
+
+        "application/pdf",
+
+        "text/plain",
+
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+
+    ];
+
+    const handleSubmit = async (e) => {
+
+        e.preventDefault();
+
+        if (!file) {
+
+            setMessage("Please select a file.");
+
+            return;
+
+        }
+
+        if (!allowedTypes.includes(file.type)) {
+
+            setMessage("Only PDF, DOCX and TXT files are allowed.");
+
+            return;
+
+        }
+
+        try {
+
+            const response = await uploadFile(file);
+
+            setMessage(response.data.message);
+
+        }
+
+        catch (error) {
+
+            setMessage("Upload failed.");
+
+        }
+
+    };
+
     return (
+
         <div style={{ padding: "30px" }}>
-            <h2>Upload Page</h2>
+
+            <h1>Upload Study Material</h1>
+
+            <form onSubmit={handleSubmit}>
+
+                <input
+
+                    type="file"
+
+                    onChange={(e) => setFile(e.target.files[0])}
+
+                />
+
+                <br /><br />
+
+                <button type="submit">
+
+                    Upload
+
+                </button>
+
+            </form>
+
+            <br />
+
+            <p>{message}</p>
+
         </div>
+
     );
+
 }
 
 export default Upload;

@@ -32,9 +32,8 @@ function Home() {
 
             <hr />
 
-            <h3>Backend Response</h3>
+            <h3>Welcome to the AI Learning Platform</h3>
 
-            <p>{backendMessage}</p>
 
         </div>
 
