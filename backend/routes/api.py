@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request, current_app
 from werkzeug.utils import secure_filename
+from services.text_extractor import extract_text
 import os
 
 api_bp = Blueprint("api", __name__)
@@ -41,7 +42,10 @@ def upload_file():
 
     file.save(filepath)
 
+    text = extract_text(filepath)
+
     return jsonify({
         "message": "File uploaded successfully",
-        "filename": filename
+        "filename": filename,
+        "text": text
     })
