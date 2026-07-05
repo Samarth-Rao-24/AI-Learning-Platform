@@ -1,14 +1,19 @@
 import axios from "axios";
 
-export const uploadFile = async (file) => {
+const API="http://127.0.0.1:5000";
 
-    const formData = new FormData();
+export const uploadFile=async(file)=>{
 
-    formData.append("file", file);
+const formData=new FormData();
 
-    return await axios.post(
-        "http://127.0.0.1:5000/api/upload",
-        formData
-    );
+formData.append("file",file);
+
+return await axios.post(
+
+`${API}/api/upload`,
+
+formData
+
+);
 
 };
