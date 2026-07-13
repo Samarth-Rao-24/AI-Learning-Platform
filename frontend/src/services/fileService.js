@@ -1,61 +1,44 @@
 import { db } from "../firebase/firebase";
 
 import {
-
-collection,
-
-addDoc,
-
-getDocs,
-
-query,
-
-where,
-
-deleteDoc,
-
-doc
-
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  deleteDoc,
+  doc
 } from "firebase/firestore";
 
 const COLLECTION = "uploads";
 
-export const saveFileMetadata = async(data)=>{
-
-    return await addDoc(
-
-        collection(db,COLLECTION),
-
-        data
-
-    );
-
+export const saveFileMetadata = async (data) => {
+  return await addDoc(
+    collection(db, COLLECTION),
+    {
+      ...data,
+      sections: data.sections || []
+    }
+  );
 };
 
-export const getUserFiles = async(uid)=>{
+export const getUserFiles = async (uid) => {
 
-    const q=query(
+  const q = query(
+    collection(db, COLLECTION),
+    where("uid", "==", uid)
+  );
 
-        collection(db,COLLECTION),
+  const snapshot = await getDocs(q);
 
-        where("uid","==",uid)
-
-    );
-
-    const snapshot=await getDocs(q);
-
-    return snapshot.docs.map(doc=>({
-
-        id:doc.id,
-
-        ...doc.data()
-
-    }));
-
+  return snapshot.docs.map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }));
 };
 
-export const deleteFileMetadata=async(id)=>{
+export const deleteFileMetadata = async (id) => {
 
-    await deleteDoc(doc(db,COLLECTION,id));
+  await deleteDoc(doc(db, COLLECTION, id));
 
 };

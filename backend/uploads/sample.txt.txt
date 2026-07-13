@@ -1,9 +1,17 @@
 Operating Systems
 
-Unit 1
+Unit 1 Introduction
 
-Introduction
+Process
 
-Process Management
+Threads
 
-CPU Scheduling
+Scheduling
+
+Unit 2 Memory Management
+
+Paging
+
+Segmentation
+
+Virtual Memory
