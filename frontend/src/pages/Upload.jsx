@@ -14,6 +14,7 @@ function Upload() {
   const [message, setMessage] = useState("");
   const [sections, setSections] = useState([]);
   const [files, setFiles] = useState([]);
+  const [summary, setSummary] = useState("");
 
   const allowedTypes = [
     "application/pdf",
@@ -50,6 +51,7 @@ function Upload() {
 
       setMessage(response.data.message);
       setSections(response.data.sections);
+      setSummary(response.data.summary);
 
       await saveFileMetadata({
         uid: user.uid,
@@ -60,7 +62,6 @@ function Upload() {
       });
 
       loadFiles();
-
       setFile(null);
     } catch (error) {
       setMessage("Upload failed.");
@@ -117,6 +118,20 @@ function Upload() {
 
       <hr />
 
+      <h2>AI Generated Summary</h2>
+
+      <div
+        style={{
+          border: "1px solid #ccc",
+          padding: "20px",
+          marginBottom: "30px",
+        }}
+      >
+        <p>{summary}</p>
+      </div>
+
+      <hr />
+
       <h2>Uploaded Files</h2>
 
       {files.length === 0 ? (
@@ -139,9 +154,7 @@ function Upload() {
                 <td>{uploadedFile.fileType}</td>
                 <td>{uploadedFile.uploadedAt}</td>
                 <td>
-                  <button
-                    onClick={() => handleDelete(uploadedFile.id)}
-                  >
+                  <button onClick={() => handleDelete(uploadedFile.id)}>
                     Delete
                   </button>
                 </td>
