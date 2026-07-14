@@ -12,9 +12,14 @@ function Upload() {
 
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
+
   const [sections, setSections] = useState([]);
-  const [files, setFiles] = useState([]);
   const [summary, setSummary] = useState("");
+  const [notes, setNotes] = useState("");
+  const [flashcards, setFlashcards] = useState("");
+  const [mcqs, setMcqs] = useState("");
+
+  const [files, setFiles] = useState([]);
 
   const allowedTypes = [
     "application/pdf",
@@ -50,22 +55,27 @@ function Upload() {
       const response = await uploadFile(file);
 
       setMessage(response.data.message);
+
       setSections(response.data.sections);
       setSummary(response.data.summary);
+      setNotes(response.data.notes);
+      setFlashcards(response.data.flashcards);
+      setMcqs(response.data.mcqs);
 
       await saveFileMetadata({
         uid: user.uid,
         fileName: file.name,
         fileType: file.type,
         uploadedAt: new Date().toLocaleString(),
-        sections: response.data.sections,
       });
 
       loadFiles();
+
       setFile(null);
+
     } catch (error) {
-      setMessage("Upload failed.");
       console.error(error);
+      setMessage("Upload failed.");
     }
   };
 
@@ -76,18 +86,22 @@ function Upload() {
 
   return (
     <div style={{ padding: "30px" }}>
+
       <h1>Upload Study Material</h1>
 
       <form onSubmit={handleSubmit}>
+
         <input
           type="file"
           onChange={(e) => setFile(e.target.files[0])}
         />
 
-        <br />
-        <br />
+        <br /><br />
 
-        <button type="submit">Upload</button>
+        <button type="submit">
+          Upload
+        </button>
+
       </form>
 
       <br />
@@ -99,13 +113,13 @@ function Upload() {
       <h2>Document Structure</h2>
 
       {sections.length === 0 ? (
-        <p>No document processed yet.</p>
+        <p>No document processed.</p>
       ) : (
         sections.map((section, index) => (
           <div
             key={index}
             style={{
-              border: "1px solid #ccc",
+              border: "1px solid gray",
               padding: "15px",
               marginBottom: "20px",
             }}
@@ -118,16 +132,66 @@ function Upload() {
 
       <hr />
 
-      <h2>AI Generated Summary</h2>
+      <h2>AI Summary</h2>
 
       <div
         style={{
-          border: "1px solid #ccc",
+          border: "1px solid gray",
           padding: "20px",
-          marginBottom: "30px",
+          marginBottom: "20px",
         }}
       >
-        <p>{summary}</p>
+        <pre style={{ whiteSpace: "pre-wrap" }}>
+          {summary}
+        </pre>
+      </div>
+
+      <hr />
+
+      <h2>Detailed Notes</h2>
+
+      <div
+        style={{
+          border: "1px solid gray",
+          padding: "20px",
+          marginBottom: "20px",
+        }}
+      >
+        <pre style={{ whiteSpace: "pre-wrap" }}>
+          {notes}
+        </pre>
+      </div>
+
+      <hr />
+
+      <h2>Flashcards</h2>
+
+      <div
+        style={{
+          border: "1px solid gray",
+          padding: "20px",
+          marginBottom: "20px",
+        }}
+      >
+        <pre style={{ whiteSpace: "pre-wrap" }}>
+          {flashcards}
+        </pre>
+      </div>
+
+      <hr />
+
+      <h2>MCQs</h2>
+
+      <div
+        style={{
+          border: "1px solid gray",
+          padding: "20px",
+          marginBottom: "20px",
+        }}
+      >
+        <pre style={{ whiteSpace: "pre-wrap" }}>
+          {mcqs}
+        </pre>
       </div>
 
       <hr />
@@ -154,7 +218,9 @@ function Upload() {
                 <td>{uploadedFile.fileType}</td>
                 <td>{uploadedFile.uploadedAt}</td>
                 <td>
-                  <button onClick={() => handleDelete(uploadedFile.id)}>
+                  <button
+                    onClick={() => handleDelete(uploadedFile.id)}
+                  >
                     Delete
                   </button>
                 </td>
@@ -163,6 +229,7 @@ function Upload() {
           </tbody>
         </table>
       )}
+
     </div>
   );
 }
