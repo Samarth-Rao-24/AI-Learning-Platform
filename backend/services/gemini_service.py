@@ -1,6 +1,7 @@
 import os
-import google.generativeai as genai
+import json
 from dotenv import load_dotenv
+import google.generativeai as genai
 
 load_dotenv()
 
@@ -11,101 +12,83 @@ genai.configure(
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 
-def ask_gemini(prompt):
+def generate_learning_material(text):
+
+    prompt = f"""
+You are an expert teacher.
+
+Read the following study material.
+
+Return ONLY valid JSON.
+
+The JSON must contain exactly these keys.
+
+{{
+    "summary":"",
+    "notes":"",
+    "flashcards":[
+        {{
+            "question":"",
+            "answer":""
+        }}
+    ],
+    "mcqs":[
+        {{
+            "question":"",
+            "options":[
+                "",
+                "",
+                "",
+                ""
+            ],
+            "answer":""
+        }}
+    ],
+    "important_questions":[
+        ""
+    ],
+    "revision_notes":"",
+    "chapter_summary":""
+}}
+
+Study Material:
+
+{text}
+"""
 
     try:
 
         response = model.generate_content(prompt)
 
-        return response.text
+        content = response.text.strip()
+
+        if content.startswith("```json"):
+            content = content.replace("```json", "")
+            content = content.replace("```", "")
+
+        elif content.startswith("```"):
+            content = content.replace("```", "")
+
+        return json.loads(content)
 
     except Exception as e:
 
         print("Gemini Error:", e)
 
-        return None
+        return {
 
+            "summary": "Gemini quota exceeded.",
 
-def generate_summary(text):
+            "notes": "Gemini quota exceeded.",
 
-    prompt = f"""
-You are an expert teacher.
+            "flashcards": [],
 
-Generate a concise summary of the following study material.
+            "mcqs": [],
 
-Study Material:
+            "important_questions": [],
 
-{text}
-"""
+            "revision_notes": "Gemini quota exceeded.",
 
-    return ask_gemini(prompt)
+            "chapter_summary": "Gemini quota exceeded."
 
-
-def generate_notes(text):
-
-    prompt = f"""
-You are an expert teacher.
-
-Generate detailed study notes.
-
-Requirements:
-
-• Use headings
-
-• Explain every topic
-
-• Use bullet points
-
-• Keep the language simple
-
-Study Material:
-
-{text}
-"""
-
-    return ask_gemini(prompt)
-
-
-def generate_flashcards(text):
-
-    prompt = f"""
-Generate 10 flashcards.
-
-Return in this format only.
-
-Question:
-Answer:
-
-Study Material:
-
-{text}
-"""
-
-    return ask_gemini(prompt)
-
-
-def generate_mcqs(text):
-
-    prompt = f"""
-Generate 10 multiple choice questions.
-
-Format:
-
-Question
-
-A)
-
-B)
-
-C)
-
-D)
-
-Answer:
-
-Study Material:
-
-{text}
-"""
-
-    return ask_gemini(prompt)
+        }

@@ -14,10 +14,14 @@ function Upload() {
   const [message, setMessage] = useState("");
 
   const [sections, setSections] = useState([]);
+
   const [summary, setSummary] = useState("");
   const [notes, setNotes] = useState("");
-  const [flashcards, setFlashcards] = useState("");
-  const [mcqs, setMcqs] = useState("");
+  const [flashcards, setFlashcards] = useState([]);
+  const [mcqs, setMcqs] = useState([]);
+  const [importantQuestions, setImportantQuestions] = useState([]);
+  const [revisionNotes, setRevisionNotes] = useState("");
+  const [chapterSummary, setChapterSummary] = useState("");
 
   const [files, setFiles] = useState([]);
 
@@ -55,12 +59,17 @@ function Upload() {
       const response = await uploadFile(file);
 
       setMessage(response.data.message);
-
       setSections(response.data.sections);
-      setSummary(response.data.summary);
-      setNotes(response.data.notes);
-      setFlashcards(response.data.flashcards);
-      setMcqs(response.data.mcqs);
+
+      const ai = response.data.ai;
+
+      setSummary(ai.summary);
+      setNotes(ai.notes);
+      setFlashcards(ai.flashcards);
+      setMcqs(ai.mcqs);
+      setImportantQuestions(ai.important_questions);
+      setRevisionNotes(ai.revision_notes);
+      setChapterSummary(ai.chapter_summary);
 
       await saveFileMetadata({
         uid: user.uid,
@@ -70,11 +79,10 @@ function Upload() {
       });
 
       loadFiles();
-
       setFile(null);
 
-    } catch (error) {
-      console.error(error);
+    } catch (err) {
+      console.error(err);
       setMessage("Upload failed.");
     }
   };
@@ -112,122 +120,182 @@ function Upload() {
 
       <h2>Document Structure</h2>
 
-      {sections.length === 0 ? (
-        <p>No document processed.</p>
-      ) : (
-        sections.map((section, index) => (
-          <div
-            key={index}
-            style={{
-              border: "1px solid gray",
-              padding: "15px",
-              marginBottom: "20px",
-            }}
-          >
-            <h3>{section.title}</h3>
-            <p>{section.content}</p>
-          </div>
-        ))
-      )}
+      {sections.map((section, index) => (
+
+        <div
+          key={index}
+          style={{
+            border: "1px solid gray",
+            padding: "15px",
+            marginBottom: "15px",
+          }}
+        >
+          <h3>{section.title}</h3>
+          <p>{section.content}</p>
+        </div>
+
+      ))}
 
       <hr />
 
       <h2>AI Summary</h2>
 
-      <div
-        style={{
-          border: "1px solid gray",
-          padding: "20px",
-          marginBottom: "20px",
-        }}
-      >
-        <pre style={{ whiteSpace: "pre-wrap" }}>
-          {summary}
-        </pre>
-      </div>
+      <pre>{summary}</pre>
 
       <hr />
 
       <h2>Detailed Notes</h2>
 
-      <div
-        style={{
-          border: "1px solid gray",
-          padding: "20px",
-          marginBottom: "20px",
-        }}
-      >
-        <pre style={{ whiteSpace: "pre-wrap" }}>
-          {notes}
-        </pre>
-      </div>
+      <pre>{notes}</pre>
 
       <hr />
 
       <h2>Flashcards</h2>
 
-      <div
-        style={{
-          border: "1px solid gray",
-          padding: "20px",
-          marginBottom: "20px",
-        }}
-      >
-        <pre style={{ whiteSpace: "pre-wrap" }}>
-          {flashcards}
-        </pre>
-      </div>
+      {flashcards.map((card, index) => (
+
+        <div
+          key={index}
+          style={{
+            border: "1px solid gray",
+            padding: "10px",
+            marginBottom: "10px",
+          }}
+        >
+          <strong>Question</strong>
+
+          <p>{card.question}</p>
+
+          <strong>Answer</strong>
+
+          <p>{card.answer}</p>
+
+        </div>
+
+      ))}
 
       <hr />
 
       <h2>MCQs</h2>
 
-      <div
-        style={{
-          border: "1px solid gray",
-          padding: "20px",
-          marginBottom: "20px",
-        }}
-      >
-        <pre style={{ whiteSpace: "pre-wrap" }}>
-          {mcqs}
-        </pre>
-      </div>
+      {mcqs.map((mcq, index) => (
+
+        <div
+          key={index}
+          style={{
+            border: "1px solid gray",
+            padding: "10px",
+            marginBottom: "15px",
+          }}
+        >
+
+          <strong>Q{index + 1}. {mcq.question}</strong>
+
+          <ul>
+
+            {mcq.options.map((option, i) => (
+
+              <li key={i}>{option}</li>
+
+            ))}
+
+          </ul>
+
+          <p>
+
+            <strong>Answer:</strong> {mcq.answer}
+
+          </p>
+
+        </div>
+
+      ))}
+
+      <hr />
+
+      <h2>Important Questions</h2>
+
+      <ul>
+
+        {importantQuestions.map((question, index) => (
+
+          <li key={index}>
+
+            {question}
+
+          </li>
+
+        ))}
+
+      </ul>
+
+      <hr />
+
+      <h2>Revision Notes</h2>
+
+      <pre>{revisionNotes}</pre>
+
+      <hr />
+
+      <h2>Chapter Summary</h2>
+
+      <pre>{chapterSummary}</pre>
 
       <hr />
 
       <h2>Uploaded Files</h2>
 
       {files.length === 0 ? (
+
         <p>No uploaded files.</p>
+
       ) : (
+
         <table border="1" cellPadding="10">
+
           <thead>
+
             <tr>
+
               <th>File Name</th>
               <th>Type</th>
               <th>Uploaded On</th>
               <th>Action</th>
+
             </tr>
+
           </thead>
 
           <tbody>
+
             {files.map((uploadedFile) => (
+
               <tr key={uploadedFile.id}>
+
                 <td>{uploadedFile.fileName}</td>
+
                 <td>{uploadedFile.fileType}</td>
+
                 <td>{uploadedFile.uploadedAt}</td>
+
                 <td>
+
                   <button
                     onClick={() => handleDelete(uploadedFile.id)}
                   >
                     Delete
                   </button>
+
                 </td>
+
               </tr>
+
             ))}
+
           </tbody>
+
         </table>
+
       )}
 
     </div>

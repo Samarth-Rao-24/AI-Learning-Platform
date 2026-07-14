@@ -5,13 +5,7 @@ import os
 
 from services.text_extractor import extract_text
 from services.document_processor import process_document
-
-from services.gemini_service import (
-    generate_summary,
-    generate_notes,
-    generate_flashcards,
-    generate_mcqs
-)
+from services.gemini_service import generate_learning_material
 
 api_bp = Blueprint("api", __name__)
 
@@ -79,31 +73,13 @@ def upload_file():
 
         return jsonify({
 
-            "message": "Unsupported file type"
+            "message": "Unsupported file"
 
         }), 400
 
     sections = process_document(text)
 
-    summary = generate_summary(text)
-
-    notes = generate_notes(text)
-
-    flashcards = generate_flashcards(text)
-
-    mcqs = generate_mcqs(text)
-
-    if summary is None:
-        summary = "Gemini quota exceeded."
-
-    if notes is None:
-        notes = "Gemini quota exceeded."
-
-    if flashcards is None:
-        flashcards = "Gemini quota exceeded."
-
-    if mcqs is None:
-        mcqs = "Gemini quota exceeded."
+    ai_content = generate_learning_material(text)
 
     return jsonify({
 
@@ -113,12 +89,6 @@ def upload_file():
 
         "sections": sections,
 
-        "summary": summary,
-
-        "notes": notes,
-
-        "flashcards": flashcards,
-
-        "mcqs": mcqs
+        "ai": ai_content
 
     })
