@@ -6,9 +6,11 @@ import {
   deleteFileMetadata,
 } from "../services/fileService";
 import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 function Upload() {
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const [file, setFile] = useState(null);
   const [message, setMessage] = useState("");
@@ -80,7 +82,6 @@ function Upload() {
 
       loadFiles();
       setFile(null);
-
     } catch (err) {
       console.error(err);
       setMessage("Upload failed.");
@@ -94,22 +95,31 @@ function Upload() {
 
   return (
     <div style={{ padding: "30px" }}>
-
       <h1>Upload Study Material</h1>
 
       <form onSubmit={handleSubmit}>
-
         <input
           type="file"
           onChange={(e) => setFile(e.target.files[0])}
         />
 
-        <br /><br />
+        <br />
+        <br />
 
         <button type="submit">
           Upload
         </button>
 
+        {/* Added as per screenshot */}
+        <br />
+        <br />
+
+        <button
+          type="button"
+          onClick={() => navigate("/tutor")}
+        >
+          Open AI Tutor
+        </button>
       </form>
 
       <br />
@@ -121,7 +131,6 @@ function Upload() {
       <h2>Document Structure</h2>
 
       {sections.map((section, index) => (
-
         <div
           key={index}
           style={{
@@ -133,7 +142,6 @@ function Upload() {
           <h3>{section.title}</h3>
           <p>{section.content}</p>
         </div>
-
       ))}
 
       <hr />
@@ -153,7 +161,6 @@ function Upload() {
       <h2>Flashcards</h2>
 
       {flashcards.map((card, index) => (
-
         <div
           key={index}
           style={{
@@ -169,9 +176,7 @@ function Upload() {
           <strong>Answer</strong>
 
           <p>{card.answer}</p>
-
         </div>
-
       ))}
 
       <hr />
@@ -179,7 +184,6 @@ function Upload() {
       <h2>MCQs</h2>
 
       {mcqs.map((mcq, index) => (
-
         <div
           key={index}
           style={{
@@ -188,27 +192,18 @@ function Upload() {
             marginBottom: "15px",
           }}
         >
-
           <strong>Q{index + 1}. {mcq.question}</strong>
 
           <ul>
-
             {mcq.options.map((option, i) => (
-
               <li key={i}>{option}</li>
-
             ))}
-
           </ul>
 
           <p>
-
             <strong>Answer:</strong> {mcq.answer}
-
           </p>
-
         </div>
-
       ))}
 
       <hr />
@@ -216,17 +211,11 @@ function Upload() {
       <h2>Important Questions</h2>
 
       <ul>
-
         {importantQuestions.map((question, index) => (
-
           <li key={index}>
-
             {question}
-
           </li>
-
         ))}
-
       </ul>
 
       <hr />
@@ -246,32 +235,21 @@ function Upload() {
       <h2>Uploaded Files</h2>
 
       {files.length === 0 ? (
-
         <p>No uploaded files.</p>
-
       ) : (
-
         <table border="1" cellPadding="10">
-
           <thead>
-
             <tr>
-
               <th>File Name</th>
               <th>Type</th>
               <th>Uploaded On</th>
               <th>Action</th>
-
             </tr>
-
           </thead>
 
           <tbody>
-
             {files.map((uploadedFile) => (
-
               <tr key={uploadedFile.id}>
-
                 <td>{uploadedFile.fileName}</td>
 
                 <td>{uploadedFile.fileType}</td>
@@ -279,25 +257,17 @@ function Upload() {
                 <td>{uploadedFile.uploadedAt}</td>
 
                 <td>
-
                   <button
                     onClick={() => handleDelete(uploadedFile.id)}
                   >
                     Delete
                   </button>
-
                 </td>
-
               </tr>
-
             ))}
-
           </tbody>
-
         </table>
-
       )}
-
     </div>
   );
 }
