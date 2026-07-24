@@ -42,3 +42,11 @@ export const deleteFileMetadata = async (id) => {
   await deleteDoc(doc(db, COLLECTION, id));
 
 };
+
+export const getUploadCount = async (uid) => {
+
+    const files = await getUserFiles(uid);
+
+    return files.length;
+
+};

@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { getQuiz, submitQuiz } from "../services/quizService";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthContext";
+import { saveQuizAttempt } from "../services/analyticsService";
 
 function Quiz() {
 
+    const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const [mcqs, setMcqs] = useState([]);
@@ -81,17 +85,67 @@ function Quiz() {
 
         try {
 
-            const response = await submitQuiz(answers);
+            const response = await submitQuiz(
 
-            setResult(response.data);
+                answers
 
-            setSubmitted(true);
+            );
+
+            setResult(
+
+                response.data
+
+            );
+
+            setSubmitted(
+
+                true
+
+            );
+
+            if (user) {
+
+                await saveQuizAttempt({
+
+                    uid: user.uid,
+
+                    score: response.data.score,
+
+                    totalQuestions:
+
+                        response.data.total_questions,
+
+                    accuracy:
+
+                        Math.round(
+
+                            (
+
+                                response.data.score /
+
+                                response.data.total_questions
+
+                            ) * 100
+
+                        ),
+
+                    attemptedAt:
+
+                        new Date().toLocaleString(),
+
+                    results:
+
+                        response.data.results
+
+                });
+
+            }
 
         }
 
-        catch (err) {
+        catch (error) {
 
-            console.log(err);
+            console.log(error);
 
         }
 

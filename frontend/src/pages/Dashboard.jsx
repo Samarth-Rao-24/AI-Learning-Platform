@@ -1,114 +1,135 @@
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { getUserProfile } from "../services/firestoreService";
+import {
+    getQuizAttempts,
+    calculateStatistics
+} from "../services/analyticsService";
+import { getUploadCount } from "../services/fileService";
+import StatCard from "../components/StatCard";
 import "./../styles/dashboard.css";
 
 function Dashboard() {
-
     const { user } = useContext(AuthContext);
+    const navigate = useNavigate();
 
     const [profile, setProfile] = useState(null);
 
+    const [uploadCount, setUploadCount] = useState(0);
+    const [quizCount, setQuizCount] = useState(0);
+    const [averageScore, setAverageScore] = useState(0);
+    const [averageAccuracy, setAverageAccuracy] = useState(0);
+    const [recentQuizzes, setRecentQuizzes] = useState([]);
+
     useEffect(() => {
-
         const fetchProfile = async () => {
-
             if (user) {
-
                 const data = await getUserProfile(user.uid);
-
                 setProfile(data);
 
-            }
+                const uploads = await getUploadCount(user.uid);
+                setUploadCount(uploads);
 
+                const quizzes = await getQuizAttempts(user.uid);
+                setRecentQuizzes(quizzes);
+
+                const stats = calculateStatistics(quizzes);
+
+                setQuizCount(stats.quizCount);
+                setAverageScore(stats.averageScore);
+                setAverageAccuracy(stats.averageAccuracy);
+            }
         };
 
         fetchProfile();
-
     }, [user]);
 
     return (
-
         <div className="dashboard-container">
-
             <div className="profile-card">
-
                 <h2>Student Profile</h2>
 
-                <p><strong>Email:</strong> {profile?.email}</p>
+                <p>
+                    <strong>Email:</strong> {profile?.email}
+                </p>
 
-                <p><strong>User ID:</strong> {profile?.uid}</p>
-
+                <p>
+                    <strong>User ID:</strong> {profile?.uid}
+                </p>
             </div>
 
             <div className="dashboard-cards">
+                <StatCard
+                    title="Uploads"
+                    value={uploadCount}
+                />
 
-                <div className="card">
+                <StatCard
+                    title="Quizzes"
+                    value={quizCount}
+                />
 
-                    <h3>Subjects</h3>
+                <StatCard
+                    title="Avg Score"
+                    value={averageScore}
+                />
 
-                    <h2>5</h2>
-
-                </div>
-
-                <div className="card">
-
-                    <h3>Study Hours</h3>
-
-                    <h2>24</h2>
-
-                </div>
-
-                <div className="card">
-
-                    <h3>Completed Topics</h3>
-
-                    <h2>18</h2>
-
-                </div>
-
-                <div className="card">
-
-                    <h3>Quiz Accuracy</h3>
-
-                    <h2>89%</h2>
-
-                </div>
-
+                <StatCard
+                    title="Accuracy"
+                    value={`${averageAccuracy}%`}
+                />
             </div>
 
             <div className="quick-actions">
-
                 <h2>Quick Actions</h2>
 
-                <button>Upload Material</button>
+                <button
+                    onClick={() => {
+                        navigate("/upload");
+                    }}
+                >
+                    Upload Material
+                </button>
 
-                <button>Start Quiz</button>
+                <button
+                    onClick={() => {
+                        navigate("/quiz");
+                    }}
+                >
+                    Start Quiz
+                </button>
 
-                <button>Generate Notes</button>
-
+                <button
+                    onClick={() => {
+                        navigate("/tutor");
+                    }}
+                >
+                    AI Tutor
+                </button>
             </div>
 
             <div className="recent-activity">
-
-                <h2>Recent Activity</h2>
+                <h2>Recent Quiz History</h2>
 
                 <ul>
+                    {recentQuizzes.map((quiz) => (
+                        <li key={quiz.id}>
+                            <strong>{quiz.topic}</strong>
 
-                    <li>Uploaded Operating Systems Notes</li>
+                            <br />
 
-                    <li>Completed Java Quiz</li>
+                            Score : {quiz.score}
 
-                    <li>Generated AI Flashcards</li>
+                            <br />
 
+                            Accuracy : {quiz.accuracy}%
+                        </li>
+                    ))}
                 </ul>
-
             </div>
-
         </div>
-
     );
-
 }
 
 export default Dashboard;
