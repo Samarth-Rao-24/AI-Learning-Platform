@@ -10,6 +10,7 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import Upload from "./pages/Upload";
 import Tutor from "./pages/Tutor";
+import Quiz from "./pages/Quiz";
 import NotFound from "./pages/NotFound";
 
 function App() {
@@ -22,29 +23,11 @@ function App() {
 
             <Routes>
 
-                <Route
+                <Route path="/" element={<Home />} />
 
-                    path="/"
+                <Route path="/login" element={<Login />} />
 
-                    element={<Home />}
-
-                />
-
-                <Route
-
-                    path="/login"
-
-                    element={<Login />}
-
-                />
-
-                <Route
-
-                    path="/signup"
-
-                    element={<Signup />}
-
-                />
+                <Route path="/signup" element={<Signup />} />
 
                 <Route
 
@@ -87,6 +70,22 @@ function App() {
                         <ProtectedRoute>
 
                             <Tutor />
+
+                        </ProtectedRoute>
+
+                    }
+
+                />
+
+                <Route
+
+                    path="/quiz"
+
+                    element={
+
+                        <ProtectedRoute>
+
+                            <Quiz />
 
                         </ProtectedRoute>
 

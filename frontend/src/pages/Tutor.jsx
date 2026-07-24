@@ -120,9 +120,7 @@ function Tutor() {
 
             <h1>AI Tutor</h1>
 
-            <button
-
-                onClick={() => navigate("/upload")}
+            <div
 
                 style={{
 
@@ -132,9 +130,33 @@ function Tutor() {
 
             >
 
-                Back to Upload
+                <button
 
-            </button>
+                    onClick={() => navigate("/upload")}
+
+                >
+
+                    Upload Page
+
+                </button>
+
+                <button
+
+                    onClick={() => navigate("/quiz")}
+
+                    style={{
+
+                        marginLeft: "10px"
+
+                    }}
+
+                >
+
+                    Start Quiz
+
+                </button>
+
+            </div>
 
             <div
 

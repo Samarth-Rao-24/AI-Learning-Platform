@@ -110,7 +110,6 @@ function Upload() {
           Upload
         </button>
 
-        {/* Added as per screenshot */}
         <br />
         <br />
 
@@ -119,6 +118,16 @@ function Upload() {
           onClick={() => navigate("/tutor")}
         >
           Open AI Tutor
+        </button>
+
+        <button
+          type="button"
+          onClick={() => navigate("/quiz")}
+          style={{
+            marginLeft: "10px",
+          }}
+        >
+          Start Quiz
         </button>
       </form>
 
@@ -212,9 +221,7 @@ function Upload() {
 
       <ul>
         {importantQuestions.map((question, index) => (
-          <li key={index}>
-            {question}
-          </li>
+          <li key={index}>{question}</li>
         ))}
       </ul>
 
@@ -251,11 +258,8 @@ function Upload() {
             {files.map((uploadedFile) => (
               <tr key={uploadedFile.id}>
                 <td>{uploadedFile.fileName}</td>
-
                 <td>{uploadedFile.fileType}</td>
-
                 <td>{uploadedFile.uploadedAt}</td>
-
                 <td>
                   <button
                     onClick={() => handleDelete(uploadedFile.id)}
